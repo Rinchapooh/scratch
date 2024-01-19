@@ -1,3 +1,3 @@
 <?php
-echo 'Privet kak dela?';
+echo 'Privet kak dela????';
 
