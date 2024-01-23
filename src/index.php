@@ -1,3 +1,5 @@
 <?php
-echo 'Privet kak dela????';
+phpinfo();
+
+
 
