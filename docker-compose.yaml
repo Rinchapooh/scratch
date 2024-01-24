@@ -32,7 +32,7 @@ services:
 #    image: php:${PHP_VER}-${ALPINE_VER}
     build:
       context: ./volumes/build/php8.2-fpm
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile_my
     healthcheck:
       test: [ "CMD", "php", "-v" ]
       interval: 5s

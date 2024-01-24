@@ -1,5 +1,6 @@
 <?php
 
-echo "PHP_INFO.local";
+echo "PHP_INFO.local<br>";
 
-phpinfo();
+var_dump(php_ini_loaded_file(), php_ini_scanned_files());
+
