@@ -1,27 +1,63 @@
 version: '3.9'
 
-
-
-services:
-  nginx:
-    container_name: ${DOMAIN_NAME}-nginx
-    image: nginx:${NGINX_VER}-${ALPINE_VER}
-    volumes:
-      - ./logs/nginx:/var/log/nginx
-      - ./volumes/etc/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./volumes/etc/nginx/sites-enabled:/etc/nginx/conf.d:ro
-      - ./src:/var/www/html
-
+#services:
+#  nginx:
+#    container_name: ${DOMAIN_NAME}-nginx
+#    image: nginx:${NGINX_VER}-${ALPINE_VER}
+#    volumes:
+#      - ./logs/nginx:/var/log/nginx
+#      - ./volumes/etc/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+#      - ./volumes/etc/nginx/sites-enabled:/etc/nginx/conf.d:ro
+#      - ./src:/var/www/html
+#
 #  php-fpm8.1:
 #    container_name: $$(DOMAIN_NAME)-php-sc
 #  mysql:
 #    container_name: $$(DOMAIN_NAME)-mysql
+#
+#
+#networks:
+#  default:
+#    driver: bridge
+#    ipam:
+#      config:
+#        - subnet: 172.16.0.1/24
+#php:<version>-fpm-alpine3.18
+#php-fpm configs: /usr/local/etc
 
+services:
+  php:
+    container_name: php
+    hostname: php
+#    image: php:${PHP_VER}-${ALPINE_VER}
+    build:
+      context: ./volumes/build/php8.2-fpm
+      dockerfile: Dockerfile
+    healthcheck:
+      test: [ "CMD", "php", "-v" ]
+      interval: 5s
+      timeout: 10s
+      retries: 3
+    volumes:
+      - ./volumes/etc/php-${PHP_VER}/PHPINFO.local/php-fpm.d/SCRATCH.conf:/usr/local/etc/php-fpm.d/www3.conf
+      - ./volumes/etc/php-${PHP_VER}/PHPINFO.local/php-fpm.d/docker.conf:/usr/local/etc/php-fpm.d/docker.conf
+      - ${PROJECT_SRC}:/var/www/html
 
-networks:
-  default:
-    driver: bridge
-    ipam:
-      config:
-        - subnet: 172.16.0.1/24
+  nginx:
+    container_name: nginx
+    hostname: nginx
+    image: nginx:${NGINX_VER}-${ALPINE_VER}
+    depends_on:
+      php:
+        condition: service_healthy
+
+    volumes:
+      - ./volumes/etc/nginx/PHPINFO.local/nginx.conf:/etc/nginx/nginx.conf
+      - ./volumes/etc/nginx/PHPINFO.local/conf.d:/etc/nginx/conf.d
+      - ./logs/nginx:/var/log/nginx
+      - ${PROJECT_SRC}:/var/www/html
+
+    ports:
+      - "8000:80"
+
 
