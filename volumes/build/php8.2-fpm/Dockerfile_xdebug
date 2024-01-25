@@ -9,6 +9,8 @@ RUN  apk add --update linux-headers
 RUN pecl install xdebug
 RUN  docker-php-ext-enable xdebug
 
+RUN mkdir -p /var/log/xdebug
+RUN touch /var/log/xdebug/xdb.log
 
 
 

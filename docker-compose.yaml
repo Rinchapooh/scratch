@@ -49,12 +49,18 @@ services:
     build:
       context: ./volumes/build/php8.2-fpm
       dockerfile: Dockerfile_xdebug
+
+    environment:
+      XDEBUG_CONFIG: remote_host=host.docker.internal
+      PHP_IDE_CONFIG: serverName=your-server-name
+
     volumes:
       - ./volumes/etc/php-${PHP_VER}/PHPINFO.local/php-fpm.d/SCRATCH.conf:/usr/local/etc/php-fpm.d/www3.conf
       - ./volumes/etc/php-${PHP_VER}/PHPINFO.local/php-fpm.d/docker.conf:/usr/local/etc/php-fpm.d/docker.conf
       - ${PROJECT_SRC}:/var/www/html
       - ./volumes/etc/xdebug/docker-php-ext-xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
       - ./logs/xdebug:/var/log/xdebug
+      
 
 
 
